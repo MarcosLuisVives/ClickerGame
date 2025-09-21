@@ -71,7 +71,7 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Top
     )  {
 
-        Text(text = "Nivel: $nivel  •  Daño: $danio  •  Normales: $kills  •  Totales: $killsTotales")
+        Text(text = "Nivel: $nivel  ·  Daño: $danio   ·  Kills: $killsTotales  ·Puntos: $puntosNivel")
 
         Spacer(modifier = Modifier.height(12.dp))
         Image(
@@ -92,6 +92,7 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
                         killsTotales++
                         if (esBoss) {
                             puntosNivel += 3
+                            mensajeColor = Color.Black
                             mensaje = "Has derrotado a un boss!"
                             esBoss = false
                             vidaEnemigoMaxima = (5..20).random()
@@ -100,10 +101,10 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
                             kills++
                         } else {
                             kills++
+                            mensajeColor = Color.Black
                             mensaje = "Has derrotado a un enemigo!"
                             if (kills % KILLS_PARA_NIVEL == 0) {
                                 puntosNivel++
-                                mensaje = "Has subido de nivel!"
                             }
                             if (kills >= KILLS_PARA_BOSS) {
                                 esBoss = true
@@ -136,7 +137,7 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
                             mensaje = "Has subido de nivel!"
                             mensajeColor = Color.Black
                         } else {
-                            mensaje = "No tienes puntos suficientes!"
+                            mensaje = "No tienes puntos suficientes, necesitas 3!"
                             mensajeColor = Color.Red
                         }
                     }
