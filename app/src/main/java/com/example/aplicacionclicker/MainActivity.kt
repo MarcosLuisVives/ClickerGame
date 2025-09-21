@@ -45,6 +45,8 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
     var danio by remember { mutableStateOf(1) }
     var kills by remember { mutableStateOf(0) }
     var killsTotales by remember { mutableStateOf(0) }
+    var dificultad by remember { mutableStateOf(1) }
+    var contadorDificultad by remember { mutableStateOf(0) }
     var esBoss by remember { mutableStateOf(false) }
     var vidaEnemigoMaxima by remember { mutableStateOf((5..20).random()) }
     var vidaEnemigoActual by remember { mutableStateOf(vidaEnemigoMaxima) }
@@ -95,7 +97,8 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
                             mensajeColor = Color.Black
                             mensaje = "Has derrotado a un boss!"
                             esBoss = false
-                            vidaEnemigoMaxima = (5..20).random()
+
+                            vidaEnemigoMaxima = (5..20).random()*dificultad
                             vidaEnemigoActual = vidaEnemigoMaxima
                             enemigoImagen = normalEnemigo.random()
                             kills++
@@ -109,7 +112,7 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
                             if (kills >= KILLS_PARA_BOSS) {
                                 esBoss = true
                                 mensaje = "Ha aparecido un boss!"
-                                vidaEnemigoMaxima = (50..100).random()
+                                vidaEnemigoMaxima = (50..100).random()*dificultad
                                 vidaEnemigoActual = vidaEnemigoMaxima
                                 enemigoImagen = bossEnemigo.random()
                                 kills = 0
@@ -136,8 +139,13 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
                             danio++
                             mensaje = "Has subido de nivel!"
                             mensajeColor = Color.Black
+                            contadorDificultad++
+                            if(contadorDificultad ==5){
+                                dificultad++
+                                contadorDificultad = 0
+                            }
                         } else {
-                            mensaje = "No tienes puntos suficientes, necesitas 3!"
+                            mensaje = "No tienes puntos suficientes!"
                             mensajeColor = Color.Red
                         }
                     }
