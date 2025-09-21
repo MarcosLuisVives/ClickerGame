@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.aplicacionclicker.ui.theme.AplicacionClickerTheme
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -20,7 +19,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import kotlin.random.Random
+import androidx.compose.ui.graphics.Color
+
+
 
 const val KILLS_PARA_NIVEL = 3
 const val KILLS_PARA_BOSS  = 15
@@ -49,7 +50,10 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
     var vidaEnemigoActual by remember { mutableStateOf(vidaEnemigoMaxima) }
     var enemigoImagen by remember { mutableStateOf(R.drawable.enemigo1) }
 
-  var mensaje by remember { mutableStateOf<String?>(null) }
+    var mensaje by remember { mutableStateOf<String?>(null) }
+    var mensajeColor by remember { mutableStateOf(Color.Black) }
+
+    var puntosNivel by remember { mutableStateOf(0) }
 
     val normalEnemigo = listOf(
         R.drawable.enemigo1,
@@ -79,53 +83,78 @@ fun EnemigoClicker(modifier: Modifier = Modifier) {
         Text(text = "Vida: $vidaEnemigoActual/$vidaEnemigoMaxima")
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                vidaEnemigoActual -= danio
-                if (vidaEnemigoActual <= 0) {
-                    killsTotales++
-                    if(esBoss) {
-                        nivel +=3
-                        danio+=3
-                        mensaje = "Has derrotado a un boss!"
-                        esBoss=false
-                        vidaEnemigoMaxima=(5..20).random()
-                        vidaEnemigoActual=vidaEnemigoMaxima
-                        enemigoImagen=normalEnemigo.random()
-                        kills++
-                    }else{
-                        kills++
-                        mensaje = "Has derrotado a un enemigo!"
-                        if (kills % KILLS_PARA_NIVEL==0) {
-                            nivel++
-                            danio++
-                            mensaje = "Has subido de nivel!"
-                        }
-                        if (kills >= KILLS_PARA_BOSS) {
-                            esBoss = true
-                            mensaje = "Ha aparecido un boss!"
-                            vidaEnemigoMaxima=(50..100).random()
-                            vidaEnemigoActual=vidaEnemigoMaxima
-                            enemigoImagen=bossEnemigo.random()
-                            kills=0
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 
-                        }else{
-                            vidaEnemigoMaxima=(5..20).random()
-                            vidaEnemigoActual=vidaEnemigoMaxima
-                            enemigoImagen=normalEnemigo.random()
+            Button(
+                onClick = {
+                    vidaEnemigoActual -= danio
+                    if (vidaEnemigoActual <= 0) {
+                        killsTotales++
+                        if (esBoss) {
+                            puntosNivel += 3
+                            mensaje = "Has derrotado a un boss!"
+                            esBoss = false
+                            vidaEnemigoMaxima = (5..20).random()
+                            vidaEnemigoActual = vidaEnemigoMaxima
+                            enemigoImagen = normalEnemigo.random()
+                            kills++
+                        } else {
+                            kills++
+                            mensaje = "Has derrotado a un enemigo!"
+                            if (kills % KILLS_PARA_NIVEL == 0) {
+                                puntosNivel++
+                                mensaje = "Has subido de nivel!"
+                            }
+                            if (kills >= KILLS_PARA_BOSS) {
+                                esBoss = true
+                                mensaje = "Ha aparecido un boss!"
+                                vidaEnemigoMaxima = (50..100).random()
+                                vidaEnemigoActual = vidaEnemigoMaxima
+                                enemigoImagen = bossEnemigo.random()
+                                kills = 0
 
+                            } else {
+                                vidaEnemigoMaxima = (5..20).random()
+                                vidaEnemigoActual = vidaEnemigoMaxima
+                                enemigoImagen = normalEnemigo.random()
+
+                            }
                         }
                     }
                 }
+            )
+            {
+                Text("Atacar")
             }
-        ) {
-        Text("Atacar")
-        }
-        Spacer(modifier = Modifier.height(12.dp))
 
-        mensaje?.let { Text(it) }
+                Button(
+                    onClick = {
+                        if (puntosNivel > 0) {
+                            puntosNivel--
+                            nivel++
+                            danio++
+                            mensaje = "Has subido de nivel!"
+                            mensajeColor = Color.Black
+                        } else {
+                            mensaje = "No tienes puntos suficientes!"
+                            mensajeColor = Color.Red
+                        }
+                    }
+                ) {
+                    Text("Subir nivel")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            mensaje?.let {
+                Text(
+                    text = it,
+                    color = mensajeColor
+                )
+            }
+        }
     }
-}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
